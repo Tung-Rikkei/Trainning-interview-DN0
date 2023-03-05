@@ -1,0 +1,45 @@
+<div class="content-container">
+    <div class="search-section">
+        <nz-input-group class="input" [nzSuffix]="suffixIconSearch">
+            <input type="text" nz-input placeholder="search by name" [(ngModel)]="searchValue" />
+        </nz-input-group>
+        <button class="delete-btn" nz-button nzType="primary" [disabled]="setOfCheckedId.size === 0"
+            [nzLoading]="loading" (click)="openModal('multi')">
+            Delete {{setOfCheckedId.size ? setOfCheckedId.size : '0'}} item(s)
+        </button>
+    </div>
+    <ng-template #suffixIconSearch>
+        <span nz-icon (click)="searchByUserName()" nzType="search"></span>
+    </ng-template>
+    <nz-table nzTableLayout="fixed" #basicTable [nzData]="listUsers" [nzFrontPagination]="false">
+        <thead>
+            <tr>
+                <th [nzDisabled]="listUsers.length === 0" [nzChecked]="checked" [nzIndeterminate]="indeterminate"
+                    (nzCheckedChange)="onAllChecked($event)"></th>
+                <th [nzSortFn]="true" (nzSortOrderChange)="onTableSort('no',$event)">No.</th>
+                <th [nzSortFn]="true" (nzSortOrderChange)="onTableSort('fullName',$event)">Full Name</th>
+                <th [nzSortFn]="true" (nzSortOrderChange)="onTableSort('age',$event)">Age</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let data of basicTable.data">
+                <td [nzChecked]="setOfCheckedId.has(data.no)" (nzCheckedChange)="onItemChecked(data.no, $event)"></td>
+                <td>{{ data.no }}</td>
+                <td>{{ data.fullName }}</td>
+                <td>{{ data.age }}</td>
+                <td><span class="action-text" (click)="openModal('single',data.no)">Delete</span></td>
+            </tr>
+        </tbody>
+    </nz-table>
+    <nz-pagination class="pagination" nzShowSizeChanger [nzPageSize]="pagination.pageSize"
+        [nzPageIndex]="pagination.page" [nzTotal]="pagination.total" (nzPageIndexChange)="changePage($event)"
+        (nzPageSizeChange)="changePageSize($event)" [nzPageSizeOptions]="[5,10,20]" [nzShowTotal]="totalTemplate">
+    </nz-pagination>
+</div>
+<ng-template #totalTemplate let-total>Total {{ total }} items</ng-template>
+<nz-modal [(nzVisible)]="isVisible" nzTitle="Are you sure???" (nzOnCancel)="handleCancel()" (nzOnOk)="confirmDelete()">
+    <ng-container *nzModalContent>
+        <p>This option can not be undone. Proceed anyway?</p>
+    </ng-container>
+</nz-modal>

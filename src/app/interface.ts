@@ -16,5 +16,12 @@ export interface ResponseResult {
     pagination: Pagination
 }
 
-export type sortField = 'no' | 'fullName' | 'age'
+interface SortObj {
+    field: string,
+    direction: string,
+}
+
+export type SortArr = SortObj[];
+
+export type sortField = 'fullName' | 'age' | 'active'
 export type sortType = string | null

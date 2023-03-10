@@ -17,9 +17,11 @@
                 <th [nzDisabled]="listUsers.length === 0" [nzChecked]="checked" [nzIndeterminate]="indeterminate"
                     (nzCheckedChange)="onAllChecked($event)"></th>
                 <th>No.</th>
-                <th [nzSortFn]="true" (nzSortOrderChange)="onTableSort('fullName',$event)">Full Name</th>
-                <th [nzSortFn]="true" (nzSortOrderChange)="onTableSort('age',$event)">Age</th>
-                <th [nzSortFn]="true">Active</th>
+                <th [nzSortFn]="true" [nzSortPriority]="true" (nzSortOrderChange)="onTableSort('fullName',$event)">Full
+                    Name</th>
+                <th [nzSortFn]="true" [nzSortPriority]="true" (nzSortOrderChange)="onTableSort('age',$event)">Age</th>
+                <th [nzSortFn]="true" [nzSortPriority]="true" (nzSortOrderChange)="onTableSort('active',$event)">Active
+                </th>
                 <th>Action</th>
             </tr>
         </thead>

@@ -17,6 +17,7 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzModalModule } from 'ng-zorro-antd/modal';
+import { AppRoutingModule } from './app-routing.module';
 
 registerLocaleData(en);
 
@@ -37,6 +38,7 @@ registerLocaleData(en);
     NzCheckboxModule,
     NzButtonModule,
     NzModalModule,
+    AppRoutingModule,
   ],
   providers: [
     { provide: NZ_I18N, useValue: en_US }

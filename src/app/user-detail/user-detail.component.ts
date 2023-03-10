@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { Pagination, ResponseResult, sortField, sortType, User } from '../interface';
+import { Pagination, ResponseResult, sortField, sortType, User, SortArr } from '../interface';
 import { UserService } from '../user.service';
+import { Router, ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-user-detail',
@@ -9,7 +10,9 @@ import { UserService } from '../user.service';
 })
 export class UserDetailComponent implements OnInit {
   constructor(
-    private userService: UserService
+    private userService: UserService,
+    private router: Router,
+    private route: ActivatedRoute,
   ) { }
   listUsers: User[] = [];
   pagination: Pagination = {
@@ -27,12 +30,26 @@ export class UserDetailComponent implements OnInit {
   isVisible: boolean = false;
   deleteType: "single" | "multi" = 'single'
   deleteItemNo: number = -1;
+  sortArr: SortArr = []
 
   getDisplayData(page: number, pageSize: number, keyword?: string, sortField?: sortField, sortType?: sortType): void {
     const response: ResponseResult = this.userService.getUsers(page, pageSize, keyword, sortField, sortType)
     this.listUsers = response.users
     this.pagination = response.pagination
     this.refreshCheckedStatus();
+    // this.sortArr = [{ field: 'a', direction: 'asc' }, { field: 'b', direction: 'desc' }]
+
+    let string = this.sortArr.map((item, index) => {
+      return `sorts[${index}].[field]=${item.field}&sorts[${index}].[direction]=${item.direction}`;
+    }).join('&');
+
+    console.log(string);
+    this.router.navigateByUrl(`/users?${string}`).then(
+      (value) => {
+        console.log(this.route.snapshot.queryParams)
+        return true
+      }
+    )
   }
 
   changePage(page: number): void {
@@ -124,6 +141,21 @@ export class UserDetailComponent implements OnInit {
 
   onTableSort(sortField: sortField, sortType: sortType) {
     console.log(sortField, sortType);
+    const indexOfField = this.sortArr.findIndex(sortObj => sortObj.field === sortField);
+    if (indexOfField !== -1) {
+      if (sortType === null) {
+        this.sortArr.splice(indexOfField, 1);
+      } else {
+        this.sortArr[indexOfField].direction = sortType.slice(0, -3);
+      }
+    } else {
+      if (sortType !== null) {
+        this.sortArr.push({
+          field: sortField,
+          direction: sortType.slice(0, -3)
+        })
+      }
+    }
     this.getDisplayData(1, this.pagination.pageSize, this.searchValue, sortField, sortType)
   }
 

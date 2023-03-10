@@ -1,0 +1,21 @@
+.content-container {
+  padding: 50px;
+
+  .search-section {
+    margin: 10px 0;
+    display: flex;
+    column-gap: 10px;
+  }
+
+  .input {
+    width: 200px;
+  }
+
+  .action-text {
+    cursor: pointer;
+
+    &:hover {
+      color: lightcoral
+    }
+  }
+}

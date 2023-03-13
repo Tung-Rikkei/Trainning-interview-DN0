@@ -1,13 +1,20 @@
 export interface User {
     no: number,
+    id: number,
     fullName: string,
     age: number,
-    active: boolean,
+    isActive: boolean,
+    dob: Date,
+    username: string,
+    password: string | number,
+    firstName: string,
+    lastName: string,
+    email: string,
 }
 
 export interface Pagination {
-    page: number,
-    total: number,
+    currentPage: number,
+    count: number,
     pageSize: number,
 }
 
@@ -23,5 +30,5 @@ interface SortObj {
 
 export type SortArr = SortObj[];
 
-export type sortField = 'fullName' | 'age' | 'active'
+export type sortField = 'fullName' | 'age' | 'isActive'
 export type sortType = string | null

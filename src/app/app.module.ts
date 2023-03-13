@@ -18,6 +18,10 @@ import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 import { AppRoutingModule } from './app-routing.module';
+import { ReactiveFormsModule } from '@angular/forms';
+import { NzFormModule } from 'ng-zorro-antd/form';
+import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
+import { NzDividerModule } from 'ng-zorro-antd/divider';
 
 registerLocaleData(en);
 
@@ -39,6 +43,10 @@ registerLocaleData(en);
     NzButtonModule,
     NzModalModule,
     AppRoutingModule,
+    ReactiveFormsModule,
+    NzFormModule,
+    NzDatePickerModule,
+    NzDividerModule,
   ],
   providers: [
     { provide: NZ_I18N, useValue: en_US }

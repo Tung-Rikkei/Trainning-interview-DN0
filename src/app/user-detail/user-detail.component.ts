@@ -4,22 +4,22 @@ import { UserService } from '../user.service';
 import { Router } from '@angular/router';
 import { debounce } from 'lodash'
 import { ActivatedRoute } from '@angular/router';
-import { of, Subject, switchMap } from 'rxjs';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { differenceInCalendarDays } from 'date-fns';
+import { ComponentCanDeactivate } from 'src/app/component-can-deactivate';
 
 @Component({
   selector: 'app-user-detail',
   templateUrl: './user-detail.component.html',
   styleUrls: ['./user-detail.component.scss']
 })
-export class UserDetailComponent implements OnInit {
+export class UserDetailComponent extends ComponentCanDeactivate implements OnInit {
   constructor(
     private userService: UserService,
     private router: Router,
     private route: ActivatedRoute,
     private fb: FormBuilder,
-  ) { }
+  ) { super() }
   listUsers: User[] = [];
   pagination: Pagination = {
     currentPage: this.route.snapshot.queryParams['page'] ?? 1,
@@ -38,25 +38,26 @@ export class UserDetailComponent implements OnInit {
   deleteItemNo: number[] = [];
   sortArr: SortArr = []
   addUserForm: FormGroup = this.fb.group({
-    username: ['', Validators.required,],
+    username: ['', Validators.compose([Validators.required, Validators.maxLength(255), Validators.pattern(/^[A-Za-z]+$/)])],
     password: ['', Validators.required,],
-    firstName: ['', Validators.required,],
-    lastName: ['', Validators.required,],
+    firstName: ['', Validators.compose([Validators.required, Validators.maxLength(255), Validators.pattern(/^[A-Za-z]+$/)])],
+    lastName: ['', Validators.compose([Validators.required, Validators.maxLength(255), Validators.pattern(/^[A-Za-z]+$/)])],
     email: ['', Validators.compose([Validators.required, Validators.pattern(/^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/)])],
     dob: new Date(),
   });
   isVisibleAdd: boolean = false
   editUserForm: FormGroup = this.fb.group({
-    username: ['', Validators.required,],
+    username: ['', Validators.compose([Validators.required, Validators.maxLength(255), Validators.pattern(/^[A-Za-z]+$/)])],
     password: ['', Validators.required,],
-    firstName: ['', Validators.required,],
-    lastName: ['', Validators.required,],
+    firstName: ['', Validators.compose([Validators.required, Validators.maxLength(255), Validators.pattern(/^[A-Za-z]+$/)])],
+    lastName: ['', Validators.compose([Validators.required, Validators.maxLength(255), Validators.pattern(/^[A-Za-z]+$/)])],
     email: ['', Validators.compose([Validators.required, Validators.pattern(/^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/)])],
     dob: new Date(),
     id: 0,
   });
   isVisibleEdit: boolean = false
   loadingModal: boolean = false
+  isEdit: boolean = false
 
   disabledDate = (current: Date): boolean =>
     // Can not select days before today and today
@@ -64,7 +65,6 @@ export class UserDetailComponent implements OnInit {
 
   handleOk() { }
   submitForm(): void {
-    console.log('submit', this.addUserForm.value, this.editUserForm.value);
     this.loadingModal = true
     this.userService.createUser({ ...this.addUserForm.value }).subscribe(() => {
       this.loadingModal = false;
@@ -74,7 +74,6 @@ export class UserDetailComponent implements OnInit {
     })
   }
   editUser(): void {
-    console.log("edit", this.editUserForm.value);
     this.loadingModal = true;
     this.userService.updateUser({ ...this.editUserForm.value }).subscribe(() => {
       this.loadingModal = false;
@@ -118,16 +117,6 @@ export class UserDetailComponent implements OnInit {
         this.refreshCheckedStatus();
       }
     )
-  }
-
-  changePage(page: number): void {
-    this.pagination.currentPage = page
-    this.getDisplayData()
-  }
-
-  changePageSize(pageSize: number): void {
-    this.pagination.pageSize = pageSize
-    this.getDisplayData()
   }
 
   searchByUserName(): void {
@@ -180,7 +169,6 @@ export class UserDetailComponent implements OnInit {
   }
 
   deleteUser(no: number): void {
-    // this.userService.deleteUser(no)
     this.setOfCheckedId.delete(no);
     this.getDisplayData()
   }
@@ -245,5 +233,18 @@ export class UserDetailComponent implements OnInit {
 
   ngOnInit(): void {
     this.getDisplayData()
+    const initialValue = this.addUserForm.value
+    this.addUserForm.valueChanges.subscribe(() => {
+      this.isEdit = Object.keys(initialValue).some(key => this.addUserForm.value[key] !=
+        initialValue[key])
+    });
+    this.route.queryParams.subscribe(() => {
+      console.log('params changed')
+      this.getDisplayData()
+    })
+  }
+
+  canDeactivate(): boolean {
+    return !this.isEdit
   }
 }

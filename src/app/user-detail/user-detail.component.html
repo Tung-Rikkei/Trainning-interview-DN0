@@ -40,12 +40,8 @@
             </tr>
         </tbody>
     </nz-table>
-    <nz-pagination class="pagination" nzShowSizeChanger [nzPageSize]="pagination.pageSize"
-        [nzPageIndex]="pagination.currentPage" [nzTotal]="pagination.count" (nzPageIndexChange)="changePage($event)"
-        (nzPageSizeChange)="changePageSize($event)" [nzPageSizeOptions]="[5,10,20]" [nzShowTotal]="totalTemplate">
-    </nz-pagination>
+    <app-pagination [(pagination)]="pagination"></app-pagination>
 </div>
-<ng-template #totalTemplate let-total>Total {{ total }} items</ng-template>
 <nz-modal [(nzVisible)]="isVisible" nzTitle="Are you sure???" (nzOnCancel)="handleCancel()" (nzOnOk)="confirmDelete()">
     <ng-container *nzModalContent>
         <p>This action can not be undone. Proceed anyway?</p>

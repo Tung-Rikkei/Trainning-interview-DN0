@@ -17,6 +17,14 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzCheckboxModule } from 'ng-zorro-antd/checkbox';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzModalModule } from 'ng-zorro-antd/modal';
+import { AppRoutingModule } from './app-routing.module';
+import { ReactiveFormsModule } from '@angular/forms';
+import { NzFormModule } from 'ng-zorro-antd/form';
+import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
+import { NzDividerModule } from 'ng-zorro-antd/divider';
+import { CanDeactivateGuard } from './can-deactivate.guard';
+import { PaginationComponent } from './pagination/pagination.component';
+import { UserInfoHandleFormComponent } from './user-info-handle-form/user-info-handle-form.component';
 
 registerLocaleData(en);
 
@@ -24,6 +32,8 @@ registerLocaleData(en);
   declarations: [
     AppComponent,
     UserDetailComponent,
+    PaginationComponent,
+    UserInfoHandleFormComponent,
   ],
   imports: [
     BrowserModule,
@@ -37,9 +47,15 @@ registerLocaleData(en);
     NzCheckboxModule,
     NzButtonModule,
     NzModalModule,
+    AppRoutingModule,
+    ReactiveFormsModule,
+    NzFormModule,
+    NzDatePickerModule,
+    NzDividerModule,
   ],
   providers: [
-    { provide: NZ_I18N, useValue: en_US }
+    { provide: NZ_I18N, useValue: en_US },
+    CanDeactivateGuard,
   ],
   bootstrap: [AppComponent]
 })

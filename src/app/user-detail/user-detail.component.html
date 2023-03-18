@@ -1,45 +1,167 @@
 <div class="content-container">
     <div class="search-section">
-        <nz-input-group class="input" [nzSuffix]="suffixIconSearch">
-            <input type="text" nz-input placeholder="search by name" [(ngModel)]="searchValue" />
-        </nz-input-group>
+        <button class="delete-btn" nz-button nzType="primary" (click)="openModal('addUser')">
+            Add a new user
+        </button>
+        <input class="input" type="text" nz-input placeholder="search by name" [(ngModel)]="searchValue"
+            (ngModelChange)="searchByUserName()" />
         <button class="delete-btn" nz-button nzType="primary" [disabled]="setOfCheckedId.size === 0"
-            [nzLoading]="loading" (click)="openModal('multi')">
+            (click)="openModal('multi')">
             Delete {{setOfCheckedId.size ? setOfCheckedId.size : '0'}} item(s)
         </button>
     </div>
-    <ng-template #suffixIconSearch>
-        <span nz-icon (click)="searchByUserName()" nzType="search"></span>
-    </ng-template>
-    <nz-table nzTableLayout="fixed" #basicTable [nzData]="listUsers" [nzFrontPagination]="false">
+    <nz-table [nzLoading]="loading" nzTableLayout="fixed" #basicTable [nzData]="listUsers" [nzFrontPagination]="false">
         <thead>
             <tr>
                 <th [nzDisabled]="listUsers.length === 0" [nzChecked]="checked" [nzIndeterminate]="indeterminate"
                     (nzCheckedChange)="onAllChecked($event)"></th>
-                <th [nzSortFn]="true" (nzSortOrderChange)="onTableSort('no',$event)">No.</th>
-                <th [nzSortFn]="true" (nzSortOrderChange)="onTableSort('fullName',$event)">Full Name</th>
-                <th [nzSortFn]="true" (nzSortOrderChange)="onTableSort('age',$event)">Age</th>
+                <th>No</th>
+                <th [nzSortFn]="true" [nzSortPriority]="true" (nzSortOrderChange)="onTableSort('fullName',$event)">Full
+                    Name</th>
+                <th [nzSortFn]="true" [nzSortPriority]="true" (nzSortOrderChange)="onTableSort('age',$event)">Age</th>
+                <th [nzSortFn]="true" [nzSortPriority]="true" (nzSortOrderChange)="onTableSort('isActive',$event)">
+                    Active
+                </th>
                 <th>Action</th>
             </tr>
         </thead>
         <tbody>
             <tr *ngFor="let data of basicTable.data">
-                <td [nzChecked]="setOfCheckedId.has(data.no)" (nzCheckedChange)="onItemChecked(data.no, $event)"></td>
+                <td [nzChecked]="setOfCheckedId.has(data.id)" (nzCheckedChange)="onItemChecked(data.id, $event)"></td>
                 <td>{{ data.no }}</td>
                 <td>{{ data.fullName }}</td>
                 <td>{{ data.age }}</td>
-                <td><span class="action-text" (click)="openModal('single',data.no)">Delete</span></td>
+                <td [nzChecked]="data.isActive"></td>
+                <td>
+                    <span class="action-text" (click)="openModal('single',data.id)">Delete</span>
+                    <nz-divider nzType="vertical"></nz-divider>
+                    <span class="action-text" (click)="openModal('edit',data.id)">Edit</span>
+                </td>
             </tr>
         </tbody>
     </nz-table>
-    <nz-pagination class="pagination" nzShowSizeChanger [nzPageSize]="pagination.pageSize"
-        [nzPageIndex]="pagination.page" [nzTotal]="pagination.total" (nzPageIndexChange)="changePage($event)"
-        (nzPageSizeChange)="changePageSize($event)" [nzPageSizeOptions]="[5,10,20]" [nzShowTotal]="totalTemplate">
-    </nz-pagination>
+    <app-pagination [(pagination)]="pagination"></app-pagination>
 </div>
-<ng-template #totalTemplate let-total>Total {{ total }} items</ng-template>
 <nz-modal [(nzVisible)]="isVisible" nzTitle="Are you sure???" (nzOnCancel)="handleCancel()" (nzOnOk)="confirmDelete()">
     <ng-container *nzModalContent>
-        <p>This option can not be undone. Proceed anyway?</p>
+        <p>This action can not be undone. Proceed anyway?</p>
     </ng-container>
+</nz-modal>
+<nz-modal [(nzVisible)]="isVisibleAdd" nzTitle="Add user" (nzOnCancel)="closeAddUserModal()" (nzOnOk)="submitForm()">
+    <ng-container *nzModalContent>
+        <form nz-form [formGroup]="addUserForm" (ngSubmit)="submitForm()">
+            <nz-form-item>
+                <nz-form-label nzRequired nzFor="username">Username</nz-form-label>
+                <nz-form-control nzErrorTip="This field can not be empty!">
+                    <nz-input-group>
+                        <input formControlName="username" nz-input placeholder="Username" />
+                    </nz-input-group>
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <nz-form-label nzRequired nzFor="password">Password</nz-form-label>
+                <nz-form-control nzErrorTip="This field can not be empty!">
+                    <nz-input-group>
+                        <input type="password" formControlName="password" nz-input placeholder="Password" />
+                    </nz-input-group>
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <nz-form-label nzRequired nzFor="firstName">First Name</nz-form-label>
+                <nz-form-control nzErrorTip="This field can not be empty!">
+                    <nz-input-group>
+                        <input formControlName="firstName" nz-input placeholder="First Name" />
+                    </nz-input-group>
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <nz-form-label nzRequired nzFor="lastName">Last Name</nz-form-label>
+                <nz-form-control nzErrorTip="This field can not be empty!">
+                    <nz-input-group>
+                        <input formControlName="lastName" nz-input placeholder="Last Name" />
+                    </nz-input-group>
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <nz-form-label nzRequired nzFor="email">Email</nz-form-label>
+                <nz-form-control [nzErrorTip]="emailErrorTpl">
+                    <nz-input-group>
+                        <input formControlName="email" nz-input placeholder="Email" />
+                    </nz-input-group>
+                    <ng-template #emailErrorTpl let-control>
+                        <ng-container *ngIf="control.hasError('pattern')">The input is not valid E-mail!</ng-container>
+                        <ng-container *ngIf="control.hasError('required')">Please input your E-mail!</ng-container>
+                    </ng-template>
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <nz-form-label nzRequired nzFor="dob">Date Of Birth</nz-form-label>
+                <nz-date-picker [nzDisabledDate]="disabledDate" formControlName="dob"></nz-date-picker>
+            </nz-form-item>
+        </form>
+    </ng-container>
+    <div *nzModalFooter>
+        <button nz-button nzType="default" (click)="closeAddUserModal()">Cancel</button>
+        <button nz-button nzType="primary" [disabled]="!addUserForm.valid" (click)="submitForm()"
+            [nzLoading]="loadingModal" [nzLoading]="false">Add</button>
+    </div>
+</nz-modal>
+<nz-modal [(nzVisible)]="isVisibleEdit" nzTitle="Edit user" (nzOnCancel)="closeEditUserModal()" (nzOnOk)="editUser()">
+    <ng-container *nzModalContent>
+        <form nz-form [formGroup]="editUserForm" (ngSubmit)="editUser()">
+            <nz-form-item>
+                <nz-form-label nzRequired nzFor="username">Username</nz-form-label>
+                <nz-form-control nzErrorTip="This field can not be empty!">
+                    <nz-input-group>
+                        <input formControlName="username" nz-input placeholder="Username" />
+                    </nz-input-group>
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <nz-form-label nzRequired nzFor="password">Password</nz-form-label>
+                <nz-form-control nzErrorTip="This field can not be empty!">
+                    <nz-input-group>
+                        <input type="password" formControlName="password" nz-input placeholder="Password" />
+                    </nz-input-group>
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <nz-form-label nzRequired nzFor="firstName">First Name</nz-form-label>
+                <nz-form-control nzErrorTip="This field can not be empty!">
+                    <nz-input-group>
+                        <input formControlName="firstName" nz-input placeholder="First Name" />
+                    </nz-input-group>
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <nz-form-label nzRequired nzFor="lastName">Last Name</nz-form-label>
+                <nz-form-control nzErrorTip="This field can not be empty!">
+                    <nz-input-group>
+                        <input formControlName="lastName" nz-input placeholder="Last Name" />
+                    </nz-input-group>
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <nz-form-label nzRequired nzFor="email">Email</nz-form-label>
+                <nz-form-control [nzErrorTip]="emailErrorTpl">
+                    <nz-input-group>
+                        <input formControlName="email" nz-input placeholder="Email" />
+                    </nz-input-group>
+                    <ng-template #emailErrorTpl let-control>
+                        <ng-container *ngIf="control.hasError('pattern')">The input is not valid E-mail!</ng-container>
+                        <ng-container *ngIf="control.hasError('required')">Please input your E-mail!</ng-container>
+                    </ng-template>
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <nz-form-label nzRequired nzFor="dob">Date Of Birth</nz-form-label>
+                <nz-date-picker [nzDisabledDate]="disabledDate" formControlName="dob"></nz-date-picker>
+            </nz-form-item>
+        </form>
+    </ng-container>
+    <div *nzModalFooter>
+        <button nz-button nzType="default" (click)="handleCancel()">Cancel</button>
+        <button nz-button nzType="primary" [disabled]="!editUserForm.valid" (click)="editUser()"
+            [nzLoading]="loadingModal" [nzLoading]="false">Edit</button>
+    </div>
 </nz-modal>

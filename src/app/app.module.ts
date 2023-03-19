@@ -22,9 +22,11 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
-import { CanDeactivateGuard } from './can-deactivate.guard';
 import { PaginationComponent } from './pagination/pagination.component';
 import { UserInfoHandleFormComponent } from './user-info-handle-form/user-info-handle-form.component';
+import { PrivateLayoutModule } from './private-layout/private-layout.module';
+import { PublicLayoutModule } from './public-layout/public-layout.module';
+import { AuthService } from './auth.service';
 
 registerLocaleData(en);
 
@@ -52,10 +54,12 @@ registerLocaleData(en);
     NzFormModule,
     NzDatePickerModule,
     NzDividerModule,
+    PrivateLayoutModule,
+    PublicLayoutModule,
   ],
   providers: [
     { provide: NZ_I18N, useValue: en_US },
-    CanDeactivateGuard,
+    AuthService,
   ],
   bootstrap: [AppComponent]
 })

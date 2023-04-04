@@ -31,7 +31,7 @@
                 <td>{{ data.no }}</td>
                 <td>{{ data.fullName }}</td>
                 <td>{{ data.age }}</td>
-                <td [nzChecked]="data.isActive"></td>
+                <td [nzChecked]="!!data.isActive"></td>
                 <td>
                     <span class="action-text" (click)="openModal('single',data.id)">Delete</span>
                     <nz-divider nzType="vertical"></nz-divider>
@@ -106,7 +106,7 @@
             [nzLoading]="loadingModal" [nzLoading]="false">Add</button>
     </div>
 </nz-modal>
-<nz-modal [(nzVisible)]="isVisibleEdit" nzTitle="Edit user" (nzOnCancel)="closeEditUserModal()" (nzOnOk)="editUser()">
+<!-- <nz-modal [(nzVisible)]="isVisibleEdit" nzTitle="Edit user" (nzOnCancel)="closeEditUserModal()" (nzOnOk)="editUser()">
     <ng-container *nzModalContent>
         <form nz-form [formGroup]="editUserForm" (ngSubmit)="editUser()">
             <nz-form-item>
@@ -164,4 +164,5 @@
         <button nz-button nzType="primary" [disabled]="!editUserForm.valid" (click)="editUser()"
             [nzLoading]="loadingModal" [nzLoading]="false">Edit</button>
     </div>
-</nz-modal>
+</nz-modal> -->
+<app-user-info-handle-form [(visible)]="isVisibleEdit" [formValue]="currentEditUser"></app-user-info-handle-form>

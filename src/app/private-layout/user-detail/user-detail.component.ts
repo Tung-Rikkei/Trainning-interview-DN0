@@ -1,12 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { Pagination, sortField, sortType, User, SortArr } from '../interface';
-import { UserService } from '../user.service';
+import { Pagination, sortField, sortType, User, SortArr } from '../../interface';
+import { UserService } from '../../services/user/user.service';
 import { Router } from '@angular/router';
 import { debounce } from 'lodash'
 import { ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { differenceInCalendarDays } from 'date-fns';
 import { ComponentCanDeactivate } from 'src/app/component-can-deactivate';
+import { debounceTime, switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-user-detail',
@@ -21,10 +22,11 @@ export class UserDetailComponent extends ComponentCanDeactivate implements OnIni
     private fb: FormBuilder,
   ) { super() }
   listUsers: User[] = [];
+  currentEditUser: any
   pagination: Pagination = {
     currentPage: this.route.snapshot.queryParams['page'] ?? 1,
     count: 1,
-    pageSize: this.route.snapshot.queryParams['take'] ?? 20,
+    pageSize: this.route.snapshot.queryParams['take'] ?? 10,
   }
   searchValue: string = this.route.snapshot.queryParams['keyword'] ?? ''
   lastSearchValue: string = this.searchValue
@@ -69,6 +71,7 @@ export class UserDetailComponent extends ComponentCanDeactivate implements OnIni
     this.userService.createUser({ ...this.addUserForm.value }).subscribe(() => {
       this.loadingModal = false;
       this.isVisibleAdd = false;
+      this.isEdit = false
       this.addUserForm.reset();
       this.getDisplayData()
     })
@@ -86,6 +89,7 @@ export class UserDetailComponent extends ComponentCanDeactivate implements OnIni
     this.isVisibleAdd = false;
   }
   closeEditUserModal() {
+    console.log('call close edit modal')
     this.isVisibleEdit = false;
   }
 
@@ -99,24 +103,7 @@ export class UserDetailComponent extends ComponentCanDeactivate implements OnIni
     const searchValue = this.searchValue ? `keyword=${this.searchValue}` : ''
     const queryParams = [sortParams, currentPageParams, pageSizeParams, searchValue].filter(param => param).join('&')
 
-    this.router.navigateByUrl(`/users?${queryParams}`).then(
-      () => {
-        this.userService
-          .getUsers()
-          .subscribe(data => {
-            let listUser = data.data as User[]
-            listUser = listUser.map((user, index) => ({
-              ...user,
-              no: index + 1 + (this.pagination.currentPage - 1) * this.pagination.pageSize
-            }))
-            this.listUsers = listUser
-            this.pagination.currentPage = data.currentPage
-            this.pagination.count = data.count
-            this.loading = false
-          })
-        this.refreshCheckedStatus();
-      }
-    )
+    this.router.navigateByUrl(`/users?${queryParams}`)
   }
 
   searchByUserName(): void {
@@ -180,8 +167,8 @@ export class UserDetailComponent extends ComponentCanDeactivate implements OnIni
       return
     }
     if (type === 'edit' && no) {
-      const user = this.listUsers.find(user => user.id = no)
-      console.log(user)
+      const user = this.listUsers.find(user => user.id === no)
+      this.currentEditUser = user
       this.editUserForm.patchValue({
         username: user?.username,
         password: user?.password,
@@ -232,16 +219,32 @@ export class UserDetailComponent extends ComponentCanDeactivate implements OnIni
   }
 
   ngOnInit(): void {
-    this.getDisplayData()
     const initialValue = this.addUserForm.value
     this.addUserForm.valueChanges.subscribe(() => {
       this.isEdit = Object.keys(initialValue).some(key => this.addUserForm.value[key] !=
         initialValue[key])
     });
-    this.route.queryParams.subscribe(() => {
-      console.log('params changed')
-      this.getDisplayData()
-    })
+    this.route.queryParams.pipe(
+      // debounceTime(300),
+      switchMap(() => {
+        this.loading = true;
+        return this.userService
+          .getUsers()
+      })
+    )
+      .subscribe((data: any) => {
+        let listUser = data.data as User[]
+        console.log('after finishing: ', listUser)
+        listUser = listUser.map((user, index) => ({
+          ...user,
+          no: index + 1 + (this.pagination.currentPage - 1) * this.pagination.pageSize
+        }))
+        this.listUsers = listUser
+        this.pagination.currentPage = data.currentPage
+        this.pagination.count = data.count
+        this.loading = false
+        this.refreshCheckedStatus();
+      })
   }
 
   canDeactivate(): boolean {

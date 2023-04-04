@@ -1,3 +1,4 @@
-<!-- NG-ZORRO -->
-<router-outlet></router-outlet>
-<!-- <app-user-detail></app-user-detail> -->
+<h1 *ngIf="authLoading$|async; else route" class="spin-container">
+    <nz-spin nzSimple [nzSize]="'large'"></nz-spin>
+</h1>
+<ng-template #route><router-outlet></router-outlet></ng-template>

@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Pagination } from '../interface';
+import { Pagination } from '../../interface';
 
 @Component({
   selector: 'app-pagination',
@@ -15,7 +15,7 @@ export class PaginationComponent {
   @Input() pagination: Pagination = {
     currentPage: this.route.snapshot.queryParams['page'] ?? 1,
     count: 1,
-    pageSize: this.route.snapshot.queryParams['take'] ?? 20,
+    pageSize: this.route.snapshot.queryParams['take'] ?? 10,
   };
   @Output() paginationChange = new EventEmitter<Pagination>();
 

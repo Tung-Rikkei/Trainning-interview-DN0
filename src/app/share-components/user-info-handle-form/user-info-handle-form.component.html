@@ -1,0 +1,59 @@
+<nz-modal [(nzVisible)]="visible" nzTitle="Edit user" (nzOnCancel)="closeModal()" (nzOnOk)="submitForm()">
+    <ng-container *nzModalContent>
+        <form nz-form [formGroup]="userForm" (ngSubmit)="submitForm()">
+            <nz-form-item>
+                <nz-form-label nzRequired nzFor="username">Username</nz-form-label>
+                <nz-form-control nzErrorTip="This field can not be empty!">
+                    <nz-input-group>
+                        <input formControlName="username" nz-input placeholder="Username" />
+                    </nz-input-group>
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <nz-form-label nzRequired nzFor="password">Password</nz-form-label>
+                <nz-form-control nzErrorTip="This field can not be empty!">
+                    <nz-input-group>
+                        <input type="password" formControlName="password" nz-input placeholder="Password" />
+                    </nz-input-group>
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <nz-form-label nzRequired nzFor="firstName">First Name</nz-form-label>
+                <nz-form-control nzErrorTip="This field can not be empty!">
+                    <nz-input-group>
+                        <input formControlName="firstName" nz-input placeholder="First Name" />
+                    </nz-input-group>
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <nz-form-label nzRequired nzFor="lastName">Last Name</nz-form-label>
+                <nz-form-control nzErrorTip="This field can not be empty!">
+                    <nz-input-group>
+                        <input formControlName="lastName" nz-input placeholder="Last Name" />
+                    </nz-input-group>
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <nz-form-label nzRequired nzFor="email">Email</nz-form-label>
+                <nz-form-control [nzErrorTip]="emailErrorTpl">
+                    <nz-input-group>
+                        <input formControlName="email" nz-input placeholder="Email" />
+                    </nz-input-group>
+                    <ng-template #emailErrorTpl let-control>
+                        <ng-container *ngIf="control.hasError('pattern')">The input is not valid E-mail!</ng-container>
+                        <ng-container *ngIf="control.hasError('required')">Please input your E-mail!</ng-container>
+                    </ng-template>
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <nz-form-label nzRequired nzFor="dob">Date Of Birth</nz-form-label>
+                <nz-date-picker [nzDisabledDate]="disabledDate" formControlName="dob"></nz-date-picker>
+            </nz-form-item>
+        </form>
+    </ng-container>
+    <div *nzModalFooter>
+        <button nz-button nzType="default" (click)="closeModal()">Cancel</button>
+        <button nz-button nzType="primary" [disabled]="!userForm.valid" (click)="submitForm()"
+            [nzLoading]="loadingModal" [nzLoading]="false">{{type}}</button>
+    </div>
+</nz-modal>

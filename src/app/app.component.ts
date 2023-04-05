@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { Store } from '@ngrx/store';
+import { selectAuthLoading } from './store/selectors/auth-selector';
 
 @Component({
   selector: 'app-root',
@@ -7,4 +9,8 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'angular-learn';
+  authLoading$ = this.store.select(selectAuthLoading)
+  constructor(
+    private store: Store,
+  ) { }
 }

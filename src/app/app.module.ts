@@ -9,7 +9,7 @@ import en from '@angular/common/locales/en';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { UserDetailComponent } from './user-detail/user-detail.component';
+import { UserDetailComponent } from './private-layout/user-detail/user-detail.component';
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzPaginationModule } from 'ng-zorro-antd/pagination';
 import { NzInputModule } from 'ng-zorro-antd/input';
@@ -22,9 +22,14 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
-import { CanDeactivateGuard } from './can-deactivate.guard';
-import { PaginationComponent } from './pagination/pagination.component';
-import { UserInfoHandleFormComponent } from './user-info-handle-form/user-info-handle-form.component';
+import { PaginationComponent } from './share-components/pagination/pagination.component';
+import { UserInfoHandleFormComponent } from './share-components/user-info-handle-form/user-info-handle-form.component';
+import { PrivateLayoutModule } from './private-layout/private-layout.module';
+import { PublicLayoutModule } from './public-layout/public-layout.module';
+import { StoreModule } from '@ngrx/store';
+import { reducers, metaReducers } from './store/reducers';
+import { authReducer } from './store/reducers/auth-reducer';
+import { NzSpinModule } from 'ng-zorro-antd/spin';
 
 registerLocaleData(en);
 
@@ -47,15 +52,18 @@ registerLocaleData(en);
     NzCheckboxModule,
     NzButtonModule,
     NzModalModule,
-    AppRoutingModule,
     ReactiveFormsModule,
     NzFormModule,
     NzDatePickerModule,
     NzDividerModule,
+    PrivateLayoutModule,
+    PublicLayoutModule,
+    AppRoutingModule,
+    NzSpinModule,
+    StoreModule.forRoot({ auth: authReducer }),
   ],
   providers: [
     { provide: NZ_I18N, useValue: en_US },
-    CanDeactivateGuard,
   ],
   bootstrap: [AppComponent]
 })

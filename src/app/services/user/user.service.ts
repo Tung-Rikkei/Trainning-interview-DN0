@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { ResponseResult, sortField, sortType, User } from './interface';
 import { ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -30,12 +29,4 @@ export class UserService {
   deleteUser(payload: number[] | Set<number>) {
     return this.http.delete(this.apiUrl, { body: { ids: [...payload] } })
   }
-
-  // deleteUsers(deleteNo: Set<number>): void {
-  //   this.listUsers = this.listUsers.filter(user => !deleteNo.has(user.no))
-  // }
-
-  // deleteUser(no: number): void {
-  //   this.listUsers = this.listUsers.filter(user => user.no !== no)
-  // }
 }

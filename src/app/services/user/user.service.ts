@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from 'src/environments/environment';
 @Injectable({
   providedIn: 'root'
 })
@@ -12,7 +13,7 @@ export class UserService {
   ) {
 
   }
-  apiUrl: string = 'https://api.quangmv-dn0.workers.dev/api/v2/users'
+  apiUrl: string = `${environment.apiUrl}/users`
 
   createUser(payload: { [key: string]: any }): Observable<any> {
     return this.http.post(this.apiUrl, payload)

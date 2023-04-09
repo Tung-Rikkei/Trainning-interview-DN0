@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { catchError, Observable, tap } from 'rxjs';
 import { TokenService } from '../token/token.service';
+import { environment } from 'src/environments/environment';
 
 interface loginData {
   username: string;
@@ -19,8 +20,10 @@ export class AuthService {
     private router: Router,
   ) { }
 
+  apiUrl: string = `${environment.apiUrl}/auth`
+
   login(loginData: loginData): Observable<any> {
-    return this.http.post('https://api.quangmv-dn0.workers.dev/api/v2/auth/login', loginData)
+    return this.http.post(`${this.apiUrl}/login`, loginData)
       .pipe(
         tap((response: any) => {
           this.tokenService.saveToken(response.access_token, response.refresh_token)
@@ -41,12 +44,12 @@ export class AuthService {
   refreshToken(): Observable<any> {
     const refresh_token = this.tokenService.getRefreshToken()
     return this.http.post(
-      'https://api.quangmv-dn0.workers.dev/api/v2/auth/refresh-token',
+      `${this.apiUrl}/refresh-token`,
       { refresh_token }
     )
   }
 
   me(): Observable<any> {
-    return this.http.get('https://api.quangmv-dn0.workers.dev/api/v2/me')
+    return this.http.get(`${environment.apiUrl}/me`)
   }
 }
